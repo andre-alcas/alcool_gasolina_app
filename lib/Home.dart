@@ -9,6 +9,59 @@ class _HomeState extends State<Home> {
   TextEditingController _controllerAlcool = TextEditingController();
   TextEditingController _controllerGasolina = TextEditingController();
 
+  String _textoResultado = "";
+
+  void _calcular(){
+    // double? precoAlcool = double.tryParse(_controllerAlcool.text);
+    // double? precoGasolina = double.tryParse(_controllerGasolina.text);
+    // print(_controllerAlcool.text.replaceAll(",", "."));
+    // print(_controllerAlcool.text);
+    // if(precoAlcool == null || precoGasolina == null){
+    //   setState(() {
+    //     _textoResultado = "Número inválido, digite números maiores que 0 e utilizando (.)";
+    //   });
+    // }else{
+    //   if((precoAlcool / precoGasolina) >= 0.7){
+    //     setState(() {
+    //       _textoResultado = "Melhor abastecer com gasolina";
+    //     });
+    //   }else{
+    //     setState(() {
+    //       _textoResultado = "Melhor abastecer com alcool";
+    //     });
+    //   }
+    // }
+    _controllerAlcool.text = _controllerAlcool.text.replaceAll(",", ".");
+    _controllerGasolina.text = _controllerGasolina.text.replaceAll(",", ".");
+
+    double? precoAlcool = double.tryParse(_controllerAlcool.text);
+    double? precoGasolina = double.tryParse(_controllerGasolina.text);
+
+    if(precoAlcool == null){
+      setState(() {
+        _textoResultado = "O preço do álcool está inválido! ";
+      });
+    }else if(precoGasolina == null) {
+      setState(() {
+        _textoResultado = "O preço da gasolina está inválido!";
+      });
+    } else{
+      _realizarCalculo(precoAlcool,precoGasolina);
+    }
+  }
+
+  void _realizarCalculo(double precoAlcool, double precoGasolina){
+    if((precoAlcool / precoGasolina) >= 0.7){
+      setState(() {
+        _textoResultado = "Melhor abastecer com gasolina";
+      });
+    }else{
+      setState(() {
+        _textoResultado = "Melhor abastecer com álcool";
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,7 +89,7 @@ class _HomeState extends State<Home> {
               TextField(
                 keyboardType: TextInputType.number,
                 decoration:
-                    InputDecoration(labelText: "Preço Alcool, ex: 1.59"),
+                    InputDecoration(labelText: "Preço álcool, ex: 1.59"),
                 style: TextStyle(fontSize: 22),
                 controller: _controllerAlcool,
               ),
@@ -57,12 +110,13 @@ class _HomeState extends State<Home> {
                       "Calcular",
                       style: TextStyle(fontSize: 20),
                     ),
-                    onPressed: () {}),
+                    onPressed: _calcular
+                ),
               ),
               Padding(
                 padding: EdgeInsets.only(top: 20),
                 child: Text(
-                  "Resultado",
+                  _textoResultado,
                   style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                 ),
               )
